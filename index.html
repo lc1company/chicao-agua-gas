@@ -256,10 +256,10 @@
             <div class="produto">
                 <img src="gas de cozinha.jpg" alt="Gas de Cozinha">
                 <p class="nome-produto">Botijão de Gas 13 kg UltraGás</p>
-                <p class="antigo-preco">R$ 125,00</p>
-                <p class="preco">R$ 115,00</p>
+                <p class="antigo-preco">R$ 110,00</p>
+                <p class="preco">R$ 105,00</p>
                 <div class="botoes">
-                    <button onclick="adicionarItem('Botijão de Gas 13 kg', 115)">
+                    <button onclick="adicionarItem('Botijão de Gas 13 kg', 105)">
                         <i class="fa fa-cart-plus"></i></button>
                     <button onclick="removerItem('Botijão de Gas 13 kg')" style="background-color:red">
                          <i class="fa fa-trash"></i></button>
@@ -304,7 +304,8 @@
                 <label for="frete">Frete:</label>
                 <select id="frete" onchange="atualizarTotal()">
                     <option value="0">Retirada na loja (Grátis)</option>
-                    <option value="7">Entrega (R$ 7,00)</option>
+                    <option value="10">Entrega Gás (R$ 10,00)</option>
+                    <option value="2">Entrega Água (R$ 2,00</option>
                 </select>
             </div>
             <div class="observacao">
@@ -319,7 +320,16 @@
                 <label for="cartaoDebito">Cartão de Débito</label><br>
                 <input type="radio" id="dinheiro" name="pagamento" value="Dinheiro" onchange="mostrarTroco()">
                 <label for="dinheiro">Dinheiro</label>
+                <input type="radio" id="pix" name="pagamento" value="pix" onchange="mostrarChavePix()">
+                <label for="pix">PIX</label><br>
+                <img src="pix.png" alt="chave pix" style="border-radius:50%; width: 150px; height: 150; margin-left: -15px; margin-top: 10px;">
             </div>
+
+            <div id="chave-pix" style="display: none;">
+              <label for="pix">Chave PIX 12345678</label>
+              <input type="text" id="pix" name="pix">
+            </div>
+
             <div id="troco-option">
                 <label for="troco">Troco para quanto?</label>
                 <input type="number" id="troco" step="0.01">
@@ -351,6 +361,17 @@
 
             carrinho.push(item);
             atualizarCarrinho();
+        }
+
+        function mostrarChavePix() {
+            const metodoPagamento = document.getElementByid("pagamento").value;
+            const ChavePix = document.getElementById("chave-pix");
+
+            if (metodoPagamento === "pix") {
+                chavePix.style.display = "block";
+            } else {
+                chavePix.style.display ="none";
+            }
         }
 
         function removerItem(nome) {
