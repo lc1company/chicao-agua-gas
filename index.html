@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chicão Agua e Gás</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        /* Estilos CSS personalizados */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: rgba(73, 145, 252, 0.788);
+            color: #000;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background-color: #0814c0fd;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .categoria {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+
+        .produtos-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .produto {
+            background-color: #ffffff;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            position: relative;
+        }
+
+        .produto img {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 10px;
+            border-radius: 50%;
+        }
+
+        .produto .detalhes {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 1;
+        }
+
+        .produto:hover .detalhes {
+            display: block;
+        }
+
+        .produto .botoes {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .produto .botoes button {
+            background-color: #25f72c;
+            color: rgb(0, 0, 0);
+            border: none;
+            padding: 25px 30px;
+            border-radius: 50%;
+            margin: 0 5px;
+            cursor: pointer;
+            justify-content: center;
+        }
+
+        .produto .botoes button.remover {
+            background-color: red;
+        }
+
+        .carrinho-container {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 20px;
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 2;
+            overflow-y: auto; /* Adicionado scroll vertical */
+            max-height: 600px; /* Altura máxima do carrinho */
+        }
+
+        .carrinho-icon {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .carrinho-icon .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 3px 6px;
+            font-size: 12px;
+        }
+
+        .cliente-info {
+            margin-bottom: 10px;
+        }
+
+        .cliente-info label {
+            font-weight: bold;
+            display: block;
+        }
+
+        .pedido-item {
+            margin-top: 10px;
+        }
+
+        .pedido-item:last-child {
+            margin-bottom: 10px;
+        }
+
+        .pedido-item h3 {
+            margin: 0;
+        }
+
+        .pedido-item p {
+            margin: 0;
+        }
+
+        .pedido-total {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .frete {
+            margin-top: 10px;
+        }
+
+        .observacao {
+            margin-top: 10px;
+        }
+
+        .tutorial {
+            font-size: 1.5em;
+            margin-top: 10px;
+            text-align: center;
+            background-color: #028dff;
+            color: rgb(0, 0, 0);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        /* Estilizar o ícone de carrinho */
+        .carrinho-icon .fa-shopping-cart {
+            font-size: 30px;
+        }
+
+        /* Estilizar botões de pagamento */
+        #metodo-pagamento label {
+            font-weight: bold;
+        }
+
+        #metodo-pagamento input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        /* Estilizar botões */
+        .botao {
+            background-color: #00ff08;
+            color: rgb(0, 0, 0);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .botao.remover {
+            background-color: red;
+        }
+
+        /* Estilizar a opção de troco */
+        #troco-option {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .preco {
+            color: #04db0b;
+            text-align: center;
+            font-size: 25px;
+            margin-top: -10px;
+        }
+
+        .antigo-preco {
+            color: red;
+            text-align: center;
+            margin-left: 75px;
+            text-decoration: line-through;
+            font-size: 15px;
+        }
+
+        .nome-produto {
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 25px;
+            color: rgb(0, 0, 0);
+            margin-left: 0px;
+        }
+    </style>
+</head>
+
+<body onload="limparCampos()">
+    <div class="container">
+        <h1>Chicão Água e Gás</h1>
+        <div class="tutorial">
+            <p>Disk entregas</p>
+            <p><i class="fa fa-whatsapp"></i> 19 98828-6825</p>
+            <p><i class="fa fa-map-marker"></i> Rua Doutor Alcides de Freitas Leitão, 637, Parque Valenca II, Campinas-SP</p>
+            <img src="logo.jpg" alt="logo" style="border-radius:50%; width: 150px; height: 150;">
+        </div>
+
+        <!-- Categoria: aguas -->
+        <div class="categoria">ÁGUAS:</div>
+        <div class="produtos-container">
+            <!-- Produtos de aguas aqui -->
+            <div class="produto">
+                <img src="galao 20l.jpg" alt="galao 20l">
+                <p class="nome-produto">Galão 20L</p>
+                <p class="antigo-preco">R$ 10,90</p>
+                <p class="preco">R$ 8,99</p>
+                <div class="botoes">
+                    <button onclick="adicionarItem('Galão 20l Água Mineral', 8.99)">
+                       <i class="fa fa-cart-plus"></i></button>
+                    <button onclick="removerItem('Galão 20l Água Mineral')" style="background-color:red">
+                        <i class="fa fa-trash"></i></button>
+                </div>
+            </div>
+            <div class="produto">
+                <img src="gas de cozinha.jpg" alt="Gas de Cozinha">
+                <p class="nome-produto">Botijão de Gas 13 kg UltraGás</p>
+                <p class="antigo-preco">R$ 125,00</p>
+                <p class="preco">R$ 115,00</p>
+                <div class="botoes">
+                    <button onclick="adicionarItem('Botijão de Gas 13 kg', 115)">
+                        <i class="fa fa-cart-plus"></i></button>
+                    <button onclick="removerItem('Botijão de Gas 13 kg')" style="background-color:red">
+                         <i class="fa fa-trash"></i></button>
+                </div>
+            </div>
+            <div class="produto">
+                <img src="trufas.jpg" alt="trufas">
+                <p class="nome-produto">Trufas Unidade</p>
+                <p class="preco">R$ 1,49</p>
+                <div class="botoes">
+                    <button onclick="adicionarItem('Trufas Unidade', 1.49)">
+                        <i class="fa fa-cart-plus"></i></button>
+                    <button onclick="removerItem('Trufas Unidade')" style="background-color:red">
+                        <i class="fa fa-trash"></i></button>    
+                </div>
+            </div>
+            <!-- Mais produtos de Cerveja aqui -->
+        </div>
+
+
+           
+    </div>
+
+    <!-- Carrinho de Compras -->
+    <div class="carrinho-container">
+        <div class="carrinho-icon" onclick="mostrarCarrinho()">
+            <i class="fa fa-shopping-cart"></i>
+            <span class="badge" id="contadorItens">0</span>
+        </div>
+        <div id="carrinho" style="display: none;">
+            <h2>Carrinho de Compras</h2>
+            <div class="cliente-info">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" placeholder="Seu nome">
+                <label for="endereco">Endereço:</label>
+                <input type="text" id="endereco" placeholder="Seu endereço">
+            </div>
+            <div id="itensPedido">
+                <!-- Itens do pedido aqui -->
+            </div>
+            <div class="frete">
+                <label for="frete">Frete:</label>
+                <select id="frete" onchange="atualizarTotal()">
+                    <option value="0">Retirada na loja (Grátis)</option>
+                    <option value="7">Entrega (R$ 7,00)</option>
+                </select>
+            </div>
+            <div class="observacao">
+                <label for="observacao">Observação:</label>
+                <input type="text" id="observacao" placeholder="Observações do pedido">
+            </div>
+            <div id="metodo-pagamento">
+                <label>Método de Pagamento:</label><br>
+                <input type="radio" id="cartaoCredito" name="pagamento" value="Cartão de Crédito" onchange="mostrarTroco()">
+                <label for="cartaoCredito">Cartão de Crédito</label><br>
+                <input type="radio" id="cartaoDebito" name="pagamento" value="Cartão de Débito" onchange="mostrarTroco()">
+                <label for="cartaoDebito">Cartão de Débito</label><br>
+                <input type="radio" id="dinheiro" name="pagamento" value="Dinheiro" onchange="mostrarTroco()">
+                <label for="dinheiro">Dinheiro</label>
+            </div>
+            <div id="troco-option">
+                <label for="troco">Troco para quanto?</label>
+                <input type="number" id="troco" step="0.01">
+            </div>
+            <div class="pedido-total">Total: R$ <span id="total">0,00</span></div>
+            <button class="botao" onclick="finalizarPedido()">Finalizar Pedido</button>
+        </div>
+    </div>
+
+    <script>
+        var carrinho = [];
+        var total = 0;
+
+        function adicionarItem(nome, preco) {
+            var item = {
+                nome: nome,
+                preco: preco,
+                quantidade: 1
+            };
+
+            // Verifica se o item já está no carrinho
+            for (var i = 0; i < carrinho.length; i++) {
+                if (carrinho[i].nome === nome) {
+                    carrinho[i].quantidade++;
+                    atualizarCarrinho();
+                    return;
+                }
+            }
+
+            carrinho.push(item);
+            atualizarCarrinho();
+        }
+
+        function removerItem(nome) {
+            for (var i = 0; i < carrinho.length; i++) {
+                if (carrinho[i].nome === nome) {
+                    if (carrinho[i].quantidade > 1) {
+                        carrinho[i].quantidade--;
+                    } else {
+                        carrinho.splice(i, 1);
+                    }
+                    atualizarCarrinho();
+                    return;
+                }
+            }
+        }
+
+        function atualizarCarrinho() {
+            var carrinhoContainer = document.getElementById("itensPedido");
+            var totalElement = document.getElementById("total");
+            var contadorItens = document.getElementById("contadorItens");
+
+            carrinhoContainer.innerHTML = "";
+            total = 0;
+
+            for (var i = 0; i < carrinho.length; i++) {
+                var item = carrinho[i];
+                var itemElement = document.createElement("div");
+                itemElement.className = "pedido-item";
+                itemElement.innerHTML = "<h3>" + item.nome + "</h3><p>Quantidade: " + item.quantidade + "</p><p>Preço: R$ " + (item.preco * item.quantidade).toFixed(2) + "</p><button class=\"botao remover\" onclick=\"removerItem('" + item.nome + "')\"><i class=\"fa fa-trash\"></i></button>";
+                carrinhoContainer.appendChild(itemElement);
+                total += item.preco * item.quantidade;
+            }
+
+            totalElement.textContent = total.toFixed(2);
+            contadorItens.textContent = carrinho.reduce(function (total, item) {
+                return total + item.quantidade;
+            }, 0);
+            atualizarTotal();
+        }
+
+        function mostrarCarrinho() {
+            var carrinhoDiv = document.getElementById("carrinho");
+            if (carrinhoDiv.style.display === "none" || carrinhoDiv.style.display === "") {
+                carrinhoDiv.style.display = "block";
+            } else {
+                carrinhoDiv.style.display = "none";
+            }
+        }
+
+        function mostrarTroco() {
+            var metodoPagamento = document.querySelector('input[name="pagamento"]:checked').value;
+            var trocoOption = document.getElementById("troco-option");
+            if (metodoPagamento === "Dinheiro") {
+                trocoOption.style.display = "block";
+            } else {
+                trocoOption.style.display = "none";
+            }
+        }
+
+        function atualizarTotal() {
+            var frete = parseFloat(document.getElementById("frete").value);
+            var troco = parseFloat(document.getElementById("troco").value) || 0;
+            total = parseFloat(total) + frete;
+            total = (total - troco).toFixed(2);
+            document.getElementById("total").textContent = total;
+        }
+
+        function finalizarPedido() {
+            var nome = document.getElementById("nome").value;
+            var endereco = document.getElementById("endereco").value;
+            var frete = parseFloat(document.getElementById("frete").value);
+            var metodoPagamento = document.querySelector('input[name="pagamento"]:checked').value;
+            var troco = parseFloat(document.getElementById("troco").value) || 0;
+            var observacao = document.getElementById("observacao").value;
+
+            var freteTexto = frete === 0 ? "Retirada no estabelecimento" : "Entrega";
+
+            var totalFinal = parseFloat(total) + troco;
+            totalFinal = totalFinal.toFixed(2);
+
+            if (carrinho.length === 0 || nome === "" || endereco === "" || metodoPagamento === undefined) {
+                alert("Preencha todos os campos, adicione itens ao carrinho e selecione o método de pagamento.");
+            } else {
+                var mensagemPedido = "Pedido de " + nome + ":\n";
+                for (var i = 0; i < carrinho.length; i++) {
+                    var item = carrinho[i];
+                    mensagemPedido += item.quantidade + "x " + item.nome + " - R$ " + (item.preco * item.quantidade).toFixed(2) + "\n";
+                }
+                mensagemPedido += "Frete: R$ " + frete.toFixed(2) + " (" + freteTexto + ")\n";
+                mensagemPedido += "Total: R$ " + totalFinal + "\n";
+                mensagemPedido += "Método de Pagamento: " + metodoPagamento + "\n";
+                mensagemPedido += "Endereço: " + endereco + "\n";
+                mensagemPedido += "Troco: R$ " + troco.toFixed(2) + "\n";
+                mensagemPedido += "Observações: " + observacao;
+
+                // Abre o WhatsApp com a mensagem pré-preenchida
+                window.open("https://wa.me/19988286825?text=" + encodeURIComponent(mensagemPedido), "_blank");
+
+                alert("Pedido finalizado! Confira os detalhes no carrinho.");
+                limparCampos();
+            }
+        }
+
+        function limparCampos() {
+            document.getElementById("nome").value = "";
+            document.getElementById("endereco").value = "";
+            document.getElementById("frete").value = "0";
+            document.getElementById("observacao").value = "";
+            document.getElementById("cartaoCredito").checked = false;
+            document.getElementById("cartaoDebito").checked = false;
+            document.getElementById("dinheiro").checked = false;
+            document.getElementById("troco").value = "";
+            document.getElementById("troco-option").style.display = "none";
+            total = 0;
+            carrinho = [];
+            atualizarCarrinho();
+        }
+    </script>
+</body>
+
+</html>
+
